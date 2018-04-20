@@ -1,0 +1,31 @@
+{
+	"pattrstorage" : 	{
+		"name" : "preset",
+		"slots" : 		{
+			"1" : 			{
+				"id" : 1,
+				"data" : 				{
+					"u794003894" : [ 99 ],
+					"u562003892" : [ 0 ],
+					"u309003890" : [ 127 ],
+					"u078003867" : [ 3 ],
+					"kbintervalptr" : [ 4 ],
+					"kbrootptr" : [ 36 ],
+					"pages-controls::u833003958" : [ 5 ],
+					"pages-controls::u814003955" : [ 5 ],
+					"fader816::recall816" : [ 4 ],
+					"togglebut12616::recallt12616" : [ 0 ],
+					"togglebut12516::recallt12516" : [ 0 ],
+					"togglebut12416::recallt12416" : [ 0 ],
+					"togglebut12316::recallt12316" : [ 0 ],
+					"togglebut12216::recallt12216" : [ 0 ],
+					"togglebut12116::recallt12116" : [ 0 ]
+				}
+
+			}
+
+		}
+
+	}
+
+}
