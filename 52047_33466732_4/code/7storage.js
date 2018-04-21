@@ -16,13 +16,12 @@ var xcount = 0;
 var ycount = 0;
 var octmin = 0;
 var octmax = 0;
-var notes = Array(11);
+var notes = Array(12);
 var tmp = 0;
 var n1mp = 0;
 var n2mp = 0;
 
 clearm();
-
 
 var Delayer = new Task(delayed);
 var delayValue = '';
@@ -59,12 +58,21 @@ function clearm(){
 			matrix[i] = [i % 16, Math.floor(i / 16),10];
 		}
 	}
-  for(var i=0;i<2;i++){
-    for(var j=0;j<6;j++){
-      notes[i+(2*j)] = 1;
-      matrix[(i+14)+((2*j)*8)][2] = 10
-    }
+  for(var i=0;i<12;i++){
+      notes[i] = 1;
   }
+  matrix[94][2] = notes[0]*10;
+  matrix[95][2] = notes[1]*10;
+  matrix[78][2] = notes[2]*10;
+  matrix[79][2] = notes[3]*10;
+  matrix[62][2] = notes[4]*10;
+  matrix[63][2] = notes[5]*10;
+  matrix[46][2] = notes[6]*10;
+  matrix[47][2] = notes[7]*10;
+  matrix[30][2] = notes[8]*10;
+  matrix[31][2] = notes[9]*10;
+  matrix[14][2] = notes[10]*10;
+  matrix[15][2] = notes[11]*10;
 }
 
 function xyin(_z,_xy){
@@ -151,14 +159,14 @@ function xyin(_z,_xy){
 		else if(xy == 110){
 			for(var i=0;i<4;i++){
 				for(var j=0;j<4;j++){
-					matrix[(i+4) + j * 16][2] = Math.floor(Math.random()*12);
+					matrix[(i+4) + j * 16][2] = quantize();
 				}
 			}
 		}
 		else if(xy == 111){
 			for(var i=0;i<4;i++){
 				for(var j=0;j<4;j++){
-					matrix[(i+4) + (j+4) * 16][2] = Math.floor(Math.random()*12);
+					matrix[(i+4) + (j+4) * 16][2] = quantize();
 				}
 			}
 		}
@@ -224,7 +232,7 @@ function clock(ax){
 			if(tmp > Math.random()*7){
 				matrix[x+((y+(4*i))*16)][2] = Math.random()*12;
 			}
-			outlet(2, Math.floor(matrix[(x+4)+((y+(4*i))*16)][2] + 36 + (12* Math.floor(Math.random()*(octmax))) - (12* Math.floor(Math.random()*octmin))));
+			outlet(2, Math.floor(matrix[(x+4)+((y+(4*i))*16)][2] + 36 + (12* Math.floor(Math.random()*octmax)) - (12* Math.floor(Math.random()*octmin))));
 			if (matrix[x+((y+(4*i))*16)][2]>0){
 				if(Math.random()*12 < matrix[x+((y+(4*i))*16)][2]){
 					outlet(0,x,y,15);
@@ -233,8 +241,7 @@ function clock(ax){
 				}
 			}
 		}
-    outlet(3,quantize());
-    outlet(4,notes);
+    outlet(5,notes);
 	  redraw();
 	}
 }
@@ -242,7 +249,7 @@ function clock(ax){
 
 function quantize(){
   var checker = 0;
-  var choser = Array(11);
+  var choser = Array(12);
   for(var i=0;i<12;i++){
     if(notes[i] == 1){
       checker += 1;
@@ -260,6 +267,18 @@ function quantize(){
 }
 
 function redraw(){
+  matrix[94][2] = notes[0]*10;
+  matrix[95][2] = notes[1]*10;
+  matrix[78][2] = notes[2]*10;
+  matrix[79][2] = notes[3]*10;
+  matrix[62][2] = notes[4]*10;
+  matrix[63][2] = notes[5]*10;
+  matrix[46][2] = notes[6]*10;
+  matrix[47][2] = notes[7]*10;
+  matrix[30][2] = notes[8]*10;
+  matrix[31][2] = notes[9]*10;
+  matrix[14][2] = notes[10]*10;
+  matrix[15][2] = notes[11]*10;
 	for(var i = 0; i< 128;i++){
 		outlet(0, matrix[i]);
 	}
