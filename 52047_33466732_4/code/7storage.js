@@ -1,5 +1,5 @@
-inlets = 2;
-outlets = 6;
+inlets = 1;
+outlets = 3;
 
 var counter = 0;
 var x=0;
@@ -22,28 +22,6 @@ var n1mp = 0;
 var n2mp = 0;
 
 clearm();
-
-var Delayer = new Task(delayed);
-var delayValue = '';
-function delayed() {
-  eval(delayValue);
-  delayValue = '';
-}
-function delayThis(a, b) {
-  delayValue = a;
-  Delayer.schedule(b);
-}
-
-function prob0(){
-	if(z == 1){
-		matrix[xy][2] = 0;
-	}
-}
-function randn(){
-	if(z == 1){
-		matrix[xy][2] = Math.floor(Math.random()*12);
-	}
-}
 
 function clearm(){
 	for(var i = 0; i< 128;i++){
@@ -77,18 +55,18 @@ function clearm(){
 
 function xyin(_z,_xy){
 	xy = _xy;
-	xin = xy%16;
-	yin = xy/16;
+	xin = _xy%16;
+	yin = Math.floor(_xy/16);
 	z = _z;
-	if(z == 0){
+	if(_z > 0){
 		if(xin < 8){
 			if(matrix[xy][2] <= 12){
 				matrix[xy][2] += 1;
 			}
-			else{
+			else if(matrix[xy][2]>12){
 				matrix[xy][2] = 0;
 			}
-      if(xin >= 4){
+      if(xin >= 4 && xin < 8){
         if(notes[matrix[xy][2]] == 0){
           matrix[xy][2] = quantize();
         }
@@ -137,16 +115,15 @@ function xyin(_z,_xy){
 			else if(yin >= 4){
 				octmin = Math.floor(yin-4);
 				matrix[xy][2] = 10;
-				for(var i=4;i<8;i++){
-					if(xin + i*16 > xy){
-						matrix[xin + i*16][2] = 0;
+				for(var i=0;i<4;i++){
+					if(xin + (i+4)*16 > xy){
+						matrix[xin + (i+4)*16][2] = 0;
 		 			}
-					if(xin + i*16 <= xy ){
-						matrix[xin + i*16][2] = 10;
+					if(xin + (i+4)*16 <= xy ){
+						matrix[xin + (i+4)*16][2] = 10;
 					}
 				}
 			}
-      outlet(4,octmin,octmax);
 		}
 		if(xy == 126){
 			for(var i=0;i<4;i++){
@@ -170,25 +147,25 @@ function xyin(_z,_xy){
 				}
 			}
 		}
-		else if(xin >= 14 && yin <= 6){
-			if(matrix[xy][2] == 0){
-				matrix[xy][2] = 10;
-				notes[Math.floor((xin - 14) + ((6-yin) * 2))] = 1;
+		else if(xin >= 14 && yin < 6){
+			if(_z > 0){
+			if(matrix[_xy][2] == 0){
+				matrix[_xy][2] = 10;
+				notes[Math.floor((xin - 14) + ((5-yin) * 2))] = 1;
 			}
 			else{
-					matrix[xy][2] = 0;
-          notes[Math.floor((xin - 14) + ((6-yin) * 2))] = 0;
+			matrix[_xy][2] = 0;
+          	notes[Math.floor((xin - 14) + ((5-yin) * 2))] = 0;
+			}
 			}
 		}
 		redraw();
-		if(x < 4){
-			delayThis('prob0()', 250)
-		}
-		else if(xy < 8){
-			delayThis('randn()', 250);
-		}
 	}
 }
+
+var go = Array(2);
+go[0] =0;
+go[1] =0;
 
 function clock(ax){
 	px = x;
@@ -232,28 +209,40 @@ function clock(ax){
 			if(tmp > Math.random()*7){
 				matrix[x+((y+(4*i))*16)][2] = Math.random()*12;
 			}
-			outlet(2, Math.floor(matrix[(x+4)+((y+(4*i))*16)][2] + 36 + (12* Math.floor(Math.random()*octmax)) - (12* Math.floor(Math.random()*octmin))));
 			if (matrix[x+((y+(4*i))*16)][2]>0){
 				if(Math.random()*12 < matrix[x+((y+(4*i))*16)][2]){
+					go[i] = 1;
 					outlet(0,x,y,15);
 					outlet(0,x+4,y,15);
-					outlet(1,i,"bang");
+					outlet(2, i, Math.floor(matrix[(x+4)+((y+(4*i))*16)][2] + 36 + (12* Math.floor(Math.random()*octmax)) - (12* Math.floor(Math.random()*octmin))));
 				}
 			}
 		}
-    outlet(5,notes);
-	  redraw();
+	if(go[0] == 1 && go[1] == 1){
+		outlet(1,Math.floor(Math.random()*2), "bang");
+	}
+	if(go[0] == 1 && go[1] == 0){
+		outlet(1,0,"bang");
+	}
+	if(go[0] == 0 && go[1] == 1){
+		outlet(1,1,"bang");
+	}
+	if(go[0] == 0 && go[1] == 0){
+
+	}
+	go[0] = 0;
+	go[1] = 0;
+	redraw();
 	}
 }
-
 
 function quantize(){
   var checker = 0;
   var choser = Array(12);
   for(var i=0;i<12;i++){
     if(notes[i] == 1){
-      checker += 1;
       choser[checker] = i;
+      checker += 1;
     }
     else{
       notes[i] = 0;
@@ -263,7 +252,7 @@ function quantize(){
     notes[0] = 1;
     matrix[94][2] = 10;
   }
-  return choser[Math.floor(Math.random()*checker)];
+  return choser[Math.floor(Math.random()*(checker-1))];
 }
 
 function redraw(){
